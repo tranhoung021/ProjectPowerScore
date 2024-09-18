@@ -23,7 +23,7 @@ public class HeptHightJump {
 				if (distance < 0) {
 					System.out.println("Value too low");
 					distance = inputResult.enterResult();
-				} else if (distance > 75) {
+				} else if (distance > 270) {
 
 					System.out.println("Value too high");
 					distance = inputResult.enterResult();
