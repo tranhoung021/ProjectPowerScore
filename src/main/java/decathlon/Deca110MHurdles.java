@@ -22,7 +22,7 @@ public class Deca110MHurdles {
 				if (runningTime < 10) {
 					System.out.println("Value too low");
 					runningTime = inputResult.enterResult();
-				} else if (runningTime > 28.5) {
+				} else if (runningTime > 30) {
 					System.out.println("Value too high");
 					runningTime = inputResult.enterResult();
 				} else {
