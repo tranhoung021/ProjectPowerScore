@@ -23,7 +23,7 @@ public class DecaHighJump {
 				if (distance < 0) {
 					System.out.println("Value too low");
 					distance = inputResult.enterResult();
-				} else if (distance > 100) {
+				} else if (distance > 300) {
 					System.out.println("Value too high");
 					distance = inputResult.enterResult();
 				} else {

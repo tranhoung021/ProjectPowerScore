@@ -5,7 +5,7 @@ import common.*;
 public class DecaLongJump {
 
 	private int score;
-	private double A = 0.13454;
+	private double A = 0.14354;
 	private double B = 220;
 	private double C = 1.4;
 	boolean active = true;
@@ -19,7 +19,7 @@ public class DecaLongJump {
 
 			try {
 				// Acceptable values.
-				if (distance < 250) {
+				if (distance < 0) {
 					System.out.println("Value too low");
 					distance = inputResult.enterResult();
 				} else if (distance > 1000) {

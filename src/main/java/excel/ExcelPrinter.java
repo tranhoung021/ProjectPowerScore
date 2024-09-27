@@ -17,11 +17,13 @@ public class ExcelPrinter {
 	public ExcelPrinter(String name) throws IOException {
 		workbook = new XSSFWorkbook();
 		excelName = name;
+		System.out.println("Skapad");
 	}
 
 	public void add(Object[][] data, String sheetName) {
 
-		XSSFSheet sheet = workbook.createSheet(sheetName);
+
+		XSSFSheet sheet = (XSSFSheet) workbook.createSheet(sheetName);
 
 		int rowCount = 0;
 
@@ -51,7 +53,7 @@ public class ExcelPrinter {
 	public void write() throws IOException {
 		FileOutputStream out = new FileOutputStream("C:/Eclipse/resultat_" + excelName + ".xlsx");
 		workbook.write(out);
-		workbook.close();
+		//workbook.close();
 	}
 
 }
