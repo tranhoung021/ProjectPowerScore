@@ -14,30 +14,22 @@ public class DecaShotPut {
 	InputResult inputResult = new InputResult();
 
 	// Calculate the score based on distance and height. Measured in meters.
-	public int calculateResult(double distance) {
+	public int calculateResult(double distance)throws InvalidResultException {
 
-		while (active) {
 
-			try {
-				// Acceptable values.
 				if (distance < 0) {
 					System.out.println("Value too low");
-					distance = inputResult.enterResult();
+					throw new InvalidResultException("Value too low");
 				} else if (distance > 30) {
 
 					System.out.println("Value too high");
-					distance = inputResult.enterResult();
-				} else {
-
-					score = calc.calculateField(A, B, C, distance);
-					active = false;
+					throw new InvalidResultException("Value too high");
 				}
-			} catch (Exception e) {
 
-				System.out.println("Please enter numbers");
-			}
-		}
+					int score = calc.calculateField(A, B, C, distance);
+
 		System.out.println("The result is: " + score);
+
 		return score;
 	}
 
