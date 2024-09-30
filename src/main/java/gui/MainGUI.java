@@ -1,31 +1,46 @@
 package gui;
 
+import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
 
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Objects;
-
+import java.io.File;
+import java.util.List;
 import common.InputName;
 import common.SelectDiscipline;
 import decathlon.*;
+import excel.ExcelTable;
 import heptathlon.*;
 import excel.ExcelPrinter;                           //INGRID
 
 
 public class MainGUI {
+    private JFrame frame;
 
     private JTextField nameField;
     private JTextField resultField;
     private JComboBox<String> competitionTypeBox;
     private JComboBox<String> disciplineBox;
     private JTextArea outputArea;
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private JTextField searchField;
+    private TableRowSorter<DefaultTableModel> sorter;
+    private File excelFile;
 
     // INGRID
     private String excelName = "Test";
@@ -43,28 +58,46 @@ public class MainGUI {
 
 
     public static void main(String[] args) {
-        new MainGUI().createAndShowGUI();
+        // Set the FlatLaf look and feel
+        FlatLightLaf.setup();
+
+        // Ensure GUI creation happens on the Event Dispatch Thread
+        SwingUtilities.invokeLater(() -> new MainGUI().createAndShowGUI());
     }
 
     private void createAndShowGUI() {
         JFrame frame = new JFrame("Track and Field Calculator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(900, 900);
+        frame.setSize(1600, 900);
 
-        JPanel panel = new JPanel(new GridLayout(6, 1));
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        // Panel for existing components
+        JPanel leftPanel = new JPanel(new GridLayout(12, 1));
+        leftPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Input Data",
+                TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+
+        leftPanel.setPreferredSize(new Dimension(450, 900)); // Set preferred size for left panel
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         // Input for competitor's name
         nameField = new JTextField(20);
-        panel.add(new JLabel("Enter Competitor's Name:"));
-        panel.add(nameField);
+        leftPanel.add(new JLabel("Enter Competitor's Name:"), gbc);
+        gbc.gridy++;
+        leftPanel.add(nameField, gbc);
 
 
-        String[] competitionType = {
-                "Decathlon", "Heptathlon"
-        };
+        String[] competitionType = {"Decathlon", "Heptathlon"};
         competitionTypeBox = new JComboBox<>(competitionType);
-        panel.add(new JLabel("Select competition:"));
-        panel.add(competitionTypeBox);
+        gbc.gridy++;
+        leftPanel.add(new JLabel("Select competition:"), gbc);
+        gbc.gridy++;
+        leftPanel.add(competitionTypeBox, gbc);
 
         // Dropdown for selecting discipline
         String[] disciplinesDeca = {
@@ -82,8 +115,10 @@ public class MainGUI {
 
 
         disciplineBox = new JComboBox<>();
-        panel.add(new JLabel("Select Discipline:"));
-        panel.add(disciplineBox);
+        gbc.gridy++;
+        leftPanel.add(new JLabel("Select Discipline:"), gbc);
+        gbc.gridy++;
+        leftPanel.add(disciplineBox, gbc);
 
         // Populate disciplineBox with decathlon disciplines by default
         for (String discipline : disciplinesDeca) {
@@ -112,38 +147,130 @@ public class MainGUI {
 
         // Input for result
         resultField = new JTextField(10);
-        panel.add(new JLabel("Enter Result:"));
-        panel.add(resultField);
+        gbc.gridy++;
+        leftPanel.add(new JLabel("Enter Result:"), gbc);
+        gbc.gridy++;
+        leftPanel.add(resultField, gbc);
 
         // Button to calculate and display result
         JButton calculateButton = new JButton("Calculate Score");
         calculateButton.addActionListener(new CalculateButtonListener());
-        panel.add(calculateButton);
-
+        gbc.gridy++;
+        leftPanel.add(calculateButton, gbc);
         // Output area
         outputArea = new JTextArea(5, 40);
         outputArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(outputArea);
-        panel.add(scrollPane);
+        gbc.gridy++;
+        leftPanel.add(scrollPane, gbc);
+
 
         //INGRID
         // Button to save results result
         JButton saveButton = new JButton("Save Score");
         saveButton.addActionListener(new SaveButtonListener());
-        panel.add(saveButton);
+        gbc.gridy++;
+        leftPanel.add(saveButton, gbc);
         //frame.add(panel);
         //frame.setVisible(true);
         //SLUT INGRID
 
+        // Panel for ExcelReader components
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Excel Data",
+                TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        rightPanel.setPreferredSize(new Dimension(750, 900)); // Set preferred size for right panel
 
-        frame.add(panel);
+        // Panel for buttons and search field
+        JPanel controlPanel = new JPanel(new GridBagLayout());
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(2, 2, 2, 2); // Add some padding
+        rightPanel.add(controlPanel, BorderLayout.NORTH);
+
+        // File chooser button
+        JButton openButton = new JButton("Open Excel File");
+        openButton.addActionListener(new OpenButtonListener());
+        openButton.setPreferredSize(new Dimension(150, 30)); // Set preferred size
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        controlPanel.add(openButton, gbc); // Add to control panel
+
+        // Buttons to switch between sheets
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton decathlonButton = new JButton("Decathlon");
+        decathlonButton.setPreferredSize(new Dimension(100, 30)); // Set preferred size
+        JButton heptathlonButton = new JButton("Heptathlon");
+        heptathlonButton.setPreferredSize(new Dimension(100, 30)); // Set preferred size
+        buttonPanel.add(decathlonButton);
+        buttonPanel.add(heptathlonButton);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        controlPanel.add(buttonPanel, gbc);
+
+        // Search field with label and placeholder text
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        searchField = new JTextField(20);
+        searchField.setPreferredSize(new Dimension(200, 30)); // Set preferred size
+        searchField.setText("Enter search term...");
+        searchField.setForeground(Color.GRAY);
+
+        searchField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (searchField.getText().equals("Enter search term...")) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Enter search term...");
+                    searchField.setForeground(Color.GRAY);
+                }
+            }
+        });
+
+        searchPanel.add(searchField);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        controlPanel.add(searchPanel, gbc);
+
+
+        // Table setup
+        tableModel = new DefaultTableModel();
+        table = new JTable(tableModel);
+        sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        rightPanel.add(tableScrollPane, BorderLayout.CENTER);
+
+        // Add panels to main panel
+        mainPanel.add(leftPanel, BorderLayout.WEST);
+        mainPanel.add(rightPanel, BorderLayout.CENTER);
+
+        frame.add(mainPanel);
         frame.setVisible(true);
+
+        // Action listeners for sheet buttons
+        decathlonButton.addActionListener(e -> loadSheetData("Decathlon"));
+        heptathlonButton.addActionListener(e -> loadSheetData("Heptathlon"));
+
+        // Action listener for search field
+        searchField.addActionListener(new SearchListener());
     }
+
+
 
     private class CalculateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String name = nameField.getText();
+            String name = nameField.getText().trim();
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Competitor's name cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             String competition = (String) competitionTypeBox.getSelectedItem();
             String discipline = (String) disciplineBox.getSelectedItem();
             String resultText = resultField.getText();
@@ -368,6 +495,62 @@ public class MainGUI {
             //SLUT INGRID
         }
     }
+
+    private void loadSheetData(String sheetName) {
+        if (excelFile != null) {
+            try {
+                ExcelTable reader = new ExcelTable();
+                List<String[]> data = reader.readExcelFile(excelFile, sheetName);
+
+                tableModel.setRowCount(0);
+                tableModel.setColumnCount(0);
+
+                // Load column names
+                if (!data.isEmpty()) {
+                    String[] columnNames = data.get(0);
+                    for (String columnName : columnNames) {
+                        tableModel.addColumn(columnName);
+                    }
+                    data.remove(0);
+                }
+
+                // Load data rows
+                for (String[] rowData : data) {
+                    tableModel.addRow(rowData);
+                }
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Error reading Excel file: " + ex.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please open an Excel file first.", "File Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private class OpenButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                excelFile = fileChooser.getSelectedFile();
+                loadSheetData("Decathlon"); // Load Decathlon sheet by default
+            }
+        }
+    }
+
+    private class SearchListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String text = searchField.getText();
+            if (text.trim().length() == 0) {
+                sorter.setRowFilter(null);
+            } else {
+                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+            }
+        }
+    }
+
+
 }
 
 

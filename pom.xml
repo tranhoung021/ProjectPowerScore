@@ -28,6 +28,11 @@
 			<artifactId>poi</artifactId>
 			<version>5.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>2.4</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>
