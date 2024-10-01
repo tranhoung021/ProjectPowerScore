@@ -46,12 +46,10 @@ public class MainGUI {
     private TableRowSorter<DefaultTableModel> sorter;
     private File excelFile;
 
-    // INGRID
-    private String excelName = "Test";
     private int iRow = 0;
     private int iColumn = 0;
-    private Object[][] myResultDecathlon = new Object[40][12];
-    private Object[][] myResultHeptathlon = new Object[40][9];
+    private Object[][] myResultDecathlon = new Object[41][12];
+    private Object[][] myResultHeptathlon = new Object[41][9];
     private String myCompetition = new String();
     String[] competitorNrDecathlon = new String[99];
     String[] competitorNrHeptathlon = new String[99];
@@ -60,8 +58,6 @@ public class MainGUI {
     private int myTotalScoreHeptathlon=0;
     private int addingScore=0;
     LocalDateTime currentDateTime = LocalDateTime.now();
-
-    //SLUT INGRID
 
 
     public static void main(String[] args) {
@@ -172,15 +168,11 @@ public class MainGUI {
         leftPanel.add(scrollPane, gbc);
 
 
-        //INGRID
         // Button to save results
         JButton saveButton = new JButton("Save Score");
         saveButton.addActionListener(new SaveButtonListener());
         gbc.gridy++;
         leftPanel.add(saveButton, gbc);
-        //frame.add(panel);
-        //frame.setVisible(true);
-        //SLUT INGRID
 
         // Panel for ExcelReader components
         JPanel rightPanel = new JPanel(new BorderLayout());
@@ -291,52 +283,52 @@ public class MainGUI {
                         case "100m (Measured in seconds)":
                             Deca100M deca100M = new Deca100M();
                             score = deca100M.calculateResult(result);
-                            diciplineNo = 1;                                        //INGRID till tabellen
+                            diciplineNo = 1;
                             break;
                         case "400m (Measured in seconds)":
                             Deca400M deca400M = new Deca400M();
                             score = deca400M.calculateResult(result);
-                            diciplineNo = 2;                                        //INGRID till tabellen
+                            diciplineNo = 2;
                             break;
                         case "1500m (Measured in seconds)":
                             Deca1500M deca1500M = new Deca1500M();
                             score = deca1500M.calculateResult(result);
-                            diciplineNo = 3;                                        //INGRID till tabellen
+                            diciplineNo = 3;
                             break;
                         case "110m Hurdles (Measured in seconds)":
                             Deca110MHurdles deca110MHurdles = new Deca110MHurdles();
                             score = deca110MHurdles.calculateResult(result);
-                            diciplineNo = 4;                                        //INGRID till tabellen
+                            diciplineNo = 4;
                             break;
                         case "Long Jump (Measured in centimeters)":
                             DecaLongJump decaLongJump = new DecaLongJump();
                             score = decaLongJump.calculateResult(result);
-                            diciplineNo = 5;                                        //INGRID till tabellen
+                            diciplineNo = 5;
                             break;
                         case "High Jump (Measured in centimeters)":
                             DecaHighJump decaHighJump = new DecaHighJump();
                             score = decaHighJump.calculateResult(result);
-                            diciplineNo = 6;                                        //INGRID till tabellen
+                            diciplineNo = 6;
                             break;
                         case "Pole Vault (Measured in centimeters)":
                             DecaPoleVault decaPoleVault = new DecaPoleVault();
                             score = decaPoleVault.calculateResult(result);
-                            diciplineNo = 7;                                        //INGRID till tabellen
+                            diciplineNo = 7;
                             break;
                         case "Discus Throw (Measured in meters)":
                             DecaDiscusThrow decaDiscusThrow = new DecaDiscusThrow();
                             score = decaDiscusThrow.calculateResult(result);
-                            diciplineNo = 8;                                        //INGRID till tabellen
+                            diciplineNo = 8;
                             break;
                         case "Javelin Throw (Measured in meters)":
                             DecaJavelinThrow decaJavelinThrow = new DecaJavelinThrow();
                             score = decaJavelinThrow.calculateResult(result);
-                            diciplineNo = 9;                                        //INGRID till tabellen
+                            diciplineNo = 9;
                             break;
                         case "Shot Put (Measured in meters)":
                             DecaShotPut decaShotPut = new DecaShotPut();
                             score = decaShotPut.calculateResult(result);
-                            diciplineNo = 10;                                        //INGRID till tabellen
+                            diciplineNo = 10;
                             break;
                     }
                 } else if (competition.equals("Heptathlon")) {
@@ -344,37 +336,37 @@ public class MainGUI {
                         case "100m Hurdles (Measured in seconds)":
                             Hep100MHurdles hep100MHurdles = new Hep100MHurdles();
                             score = hep100MHurdles.calculateResult(result);
-                            diciplineNo = 1;                                        //INGRID till tabellen
+                            diciplineNo = 1;
                             break;
                         case "200m (Measured in seconds)":
                             Hep200M hep200M = new Hep200M();
                             score = hep200M.calculateResult(result);
-                            diciplineNo = 2;                                        //INGRID till tabellen
+                            diciplineNo = 2;
                             break;
                         case "800m (Measured in seconds)":
                             Hep800M hep800M = new Hep800M();
                             score = hep800M.calculateResult(result);
-                            diciplineNo = 3;                                        //INGRID till tabellen
+                            diciplineNo = 3;
                             break;
                         case "Long Jump (Measured in centimeters)":
                             HeptLongJump heptLongJump = new HeptLongJump();
                             score = heptLongJump.calculateResult(result);
-                            diciplineNo = 4;                                        //INGRID till tabellen
+                            diciplineNo = 4;
                             break;
                         case "High Jump (Measured in centimeters)":
                             HeptHightJump heptHightJump = new HeptHightJump();
                             score = heptHightJump.calculateResult(result);
-                            diciplineNo = 5;                                        //INGRID till tabellen
+                            diciplineNo = 5;
                             break;
                         case "Javelin Throw (Measured in meters)":
                             HeptJavelinThrow heptJavelinThrow = new HeptJavelinThrow();
                             score = heptJavelinThrow.calculateResult(result);
-                            diciplineNo = 6;                                        //INGRID till tabellen
+                            diciplineNo = 6;
                             break;
                         case "Shot Put (Measured in meters)":
                             HeptShotPut heptShotPut = new HeptShotPut();
                             score = heptShotPut.calculateResult(result);
-                            diciplineNo = 7;                                        //INGRID till tabellen
+                            diciplineNo = 7;
                             break;
                     }
                 }
@@ -387,9 +379,8 @@ public class MainGUI {
                 outputArea.append("Score: " + score + "\n\n");
 
 
-                //INGRID
                 //One table for Decathlon and one for Heptathlon
-                if (competition.equals("Decathlon")) {                                                   //DECA
+                if (competition.equals("Decathlon")) {
                     //Write headings
                     myResultDecathlon[0][0] = "Participant";
                     myResultDecathlon[0][1] = "100m";
@@ -421,25 +412,29 @@ public class MainGUI {
                     }
 
 
-
                     //the result is added to the competitor row in the result table
+                    if (i<myResultDecathlon.length){
                     myResultDecathlon[i][0] = name;
                     iColumn = diciplineNo;
                     myResultDecathlon[i][iColumn] = score;
                     myCompetition = competition;
 
+                    //The total score for the competitor is calculated
                     myTotalScoreDecathlon = 0;
-                    for (int iTot =1;iTot<(11);iTot++){
-                        System.out.println(iTot);                                    //DEBUG
-                        System.out.println("result"+myResultDecathlon[i][iTot]);
-                        if (myResultDecathlon[i][iTot] != null){
-                            addingScore= (int) myResultDecathlon[i][iTot];
-                            myTotalScoreDecathlon = myTotalScoreDecathlon+addingScore;
-                            System.out.println("total"+myTotalScoreDecathlon);
+                    for (int iTot = 1; iTot < (11); iTot++) {
+                        //System.out.println(iTot);                                    //DEBUG
+                        System.out.println("result" + myResultDecathlon[i][iTot]);
+                        if (myResultDecathlon[i][iTot] != null) {
+                            addingScore = (int) myResultDecathlon[i][iTot];
+                            myTotalScoreDecathlon = myTotalScoreDecathlon + addingScore;
+                            System.out.println("total" + myTotalScoreDecathlon);
                         }
                     }
 
                     myResultDecathlon[i][11] = myTotalScoreDecathlon;
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Maximum limit of competitors is 40, this is number " + i);
+                    }
 
                 } else if (competition.equals("Heptathlon")) {                                                                                 //HEPTA
 
@@ -458,6 +453,7 @@ public class MainGUI {
                     // Check in the array competitorNr if the competitor already exists
                     int i = 0;
 
+
                     while (i < competitorNrHeptathlon.length) {
                         if (Objects.equals(competitorNrHeptathlon[i], name)) {         //The competitor is found in the array
                             break;
@@ -468,26 +464,31 @@ public class MainGUI {
                         }
                         i = i + 1;
                     }
+
+
+
                     //the result is added to the competitor row in the result table
-                    myResultHeptathlon[i][0] = name;
-                    iColumn = diciplineNo;
-                    myResultHeptathlon[i][iColumn] = score;
-                    myCompetition = competition;
-                    myTotalScoreHeptathlon = 0;
-                    for (int iTot =1;iTot<(8);iTot++){
-                        System.out.println(iTot);                                    //DEBUG
-                        System.out.println("result"+myResultHeptathlon[i][iTot]);
-                        if (myResultHeptathlon[i][iTot] != null){
-                            addingScore= (int) myResultHeptathlon[i][iTot];
-                            myTotalScoreHeptathlon = myTotalScoreHeptathlon+addingScore;
-                            System.out.println("total"+myTotalScoreHeptathlon);
+                    if (i<myResultHeptathlon.length){
+                        myResultHeptathlon[i][0] = name;
+                        iColumn = diciplineNo;
+                        myResultHeptathlon[i][iColumn] = score;
+                        myCompetition = competition;
+                        myTotalScoreHeptathlon = 0;
+                        for (int iTot = 1; iTot < (8); iTot++) {
+                            //System.out.println(iTot);                                    //DEBUG
+                            //System.out.println("result" + myResultHeptathlon[i][iTot]);
+                            if (myResultHeptathlon[i][iTot] != null) {
+                                addingScore = (int) myResultHeptathlon[i][iTot];
+                                myTotalScoreHeptathlon = myTotalScoreHeptathlon + addingScore;
+                                System.out.println("total" + myTotalScoreHeptathlon);
+                            }
                         }
+
+                        myResultHeptathlon[i][8] = myTotalScoreHeptathlon;
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Maximum limit of competitors is 40, this is number " + i);
                     }
-
-                    myResultHeptathlon[i][8] = myTotalScoreHeptathlon;
                 }
-                //SLUT INGRID
-
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Please enter a valid number for the result.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
             } catch (InvalidResultException ex) {
@@ -503,10 +504,9 @@ public class MainGUI {
             ExcelPrinter excelPrinter = null;
 
             try {
+                //create unique file name
                 LocalDateTime currentDateTime = LocalDateTime.now();
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
-
-               //currentDateTime = currentDateTime.format(myFormatObj);
                 excelPrinter = new ExcelPrinter("PowerScore"+currentDateTime.format(myFormatObj));    //Excel sheet is created
 
             } catch (IOException ex) {
@@ -534,8 +534,8 @@ public class MainGUI {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
+
             }
-            //SLUT INGRID
         }
     }
 
@@ -592,8 +592,7 @@ public class MainGUI {
             }
         }
     }
-
-
+    
 }
 
 
