@@ -17,6 +17,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.io.File;
 import java.util.List;
@@ -26,6 +28,8 @@ import decathlon.*;
 import excel.ExcelTable;
 import heptathlon.*;
 import excel.ExcelPrinter;                           //INGRID
+
+import static java.lang.Integer.parseInt;
 
 
 public class MainGUI {
@@ -46,13 +50,16 @@ public class MainGUI {
     private String excelName = "Test";
     private int iRow = 0;
     private int iColumn = 0;
-    private Object[][] myResultDecathlon = new Object[40][11];
-    private Object[][] myResultHeptathlon = new Object[40][8];
+    private Object[][] myResultDecathlon = new Object[40][12];
+    private Object[][] myResultHeptathlon = new Object[40][9];
     private String myCompetition = new String();
     String[] competitorNrDecathlon = new String[99];
     String[] competitorNrHeptathlon = new String[99];
     private int diciplineNo = 0;
-    LocalDate currentDate = LocalDate.now();
+    private int myTotalScoreDecathlon=0;
+    private int myTotalScoreHeptathlon=0;
+    private int addingScore=0;
+    LocalDateTime currentDateTime = LocalDateTime.now();
 
     //SLUT INGRID
 
@@ -166,7 +173,7 @@ public class MainGUI {
 
 
         //INGRID
-        // Button to save results result
+        // Button to save results
         JButton saveButton = new JButton("Save Score");
         saveButton.addActionListener(new SaveButtonListener());
         gbc.gridy++;
@@ -384,7 +391,7 @@ public class MainGUI {
                 //One table for Decathlon and one for Heptathlon
                 if (competition.equals("Decathlon")) {                                                   //DECA
                     //Write headings
-                    myResultDecathlon[0][0] = "Scoretabell";
+                    myResultDecathlon[0][0] = "Participant";
                     myResultDecathlon[0][1] = "100m";
                     myResultDecathlon[0][2] = "400m";
                     myResultDecathlon[0][3] = "1500m";
@@ -395,6 +402,8 @@ public class MainGUI {
                     myResultDecathlon[0][8] = "Discus Throw";
                     myResultDecathlon[0][9] = "Javelin Throw";
                     myResultDecathlon[0][10] = "Shot put";
+                    myResultDecathlon[0][11] = "Total Score";
+
                     competitorNrDecathlon[0] = "Decathlon";
 
                     // Check in the array competitorNrDecathlon if the competitor already exists
@@ -410,15 +419,31 @@ public class MainGUI {
                         }
                         i = i + 1;
                     }
+
+
+
                     //the result is added to the competitor row in the result table
                     myResultDecathlon[i][0] = name;
                     iColumn = diciplineNo;
                     myResultDecathlon[i][iColumn] = score;
                     myCompetition = competition;
 
+                    myTotalScoreDecathlon = 0;
+                    for (int iTot =1;iTot<(11);iTot++){
+                        System.out.println(iTot);                                    //DEBUG
+                        System.out.println("result"+myResultDecathlon[i][iTot]);
+                        if (myResultDecathlon[i][iTot] != null){
+                            addingScore= (int) myResultDecathlon[i][iTot];
+                            myTotalScoreDecathlon = myTotalScoreDecathlon+addingScore;
+                            System.out.println("total"+myTotalScoreDecathlon);
+                        }
+                    }
+
+                    myResultDecathlon[i][11] = myTotalScoreDecathlon;
+
                 } else if (competition.equals("Heptathlon")) {                                                                                 //HEPTA
 
-                    myResultHeptathlon[0][0] = "Scoretabell";
+                    myResultHeptathlon[0][0] = "Participant";
                     myResultHeptathlon[0][1] = "100m Hurdles";
                     myResultHeptathlon[0][2] = "200m";
                     myResultHeptathlon[0][3] = "800m";
@@ -426,6 +451,8 @@ public class MainGUI {
                     myResultHeptathlon[0][5] = "High Jump";
                     myResultHeptathlon[0][6] = "Javelin Throw";
                     myResultHeptathlon[0][7] = "Shot put";
+                    myResultHeptathlon[0][8] = "Total Score";
+
                     competitorNrHeptathlon[0] = "Heptathlon";
 
                     // Check in the array competitorNr if the competitor already exists
@@ -446,6 +473,18 @@ public class MainGUI {
                     iColumn = diciplineNo;
                     myResultHeptathlon[i][iColumn] = score;
                     myCompetition = competition;
+                    myTotalScoreHeptathlon = 0;
+                    for (int iTot =1;iTot<(8);iTot++){
+                        System.out.println(iTot);                                    //DEBUG
+                        System.out.println("result"+myResultHeptathlon[i][iTot]);
+                        if (myResultHeptathlon[i][iTot] != null){
+                            addingScore= (int) myResultHeptathlon[i][iTot];
+                            myTotalScoreHeptathlon = myTotalScoreHeptathlon+addingScore;
+                            System.out.println("total"+myTotalScoreHeptathlon);
+                        }
+                    }
+
+                    myResultHeptathlon[i][8] = myTotalScoreHeptathlon;
                 }
                 //SLUT INGRID
 
@@ -464,7 +503,11 @@ public class MainGUI {
             ExcelPrinter excelPrinter = null;
 
             try {
-                excelPrinter = new ExcelPrinter("PowerScore");    //Excel sheet is created
+                LocalDateTime currentDateTime = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+
+               //currentDateTime = currentDateTime.format(myFormatObj);
+                excelPrinter = new ExcelPrinter("PowerScore"+currentDateTime.format(myFormatObj));    //Excel sheet is created
 
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
