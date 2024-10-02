@@ -156,7 +156,7 @@ public class MainGUI {
         leftPanel.add(resultField, gbc);
 
         // Button to calculate and display result
-        JButton calculateButton = new JButton("Calculate Score");
+        JButton calculateButton = new JButton("Calculate Score & Save");
         calculateButton.addActionListener(new CalculateButtonListener());
         gbc.gridy++;
         leftPanel.add(calculateButton, gbc);
@@ -168,11 +168,11 @@ public class MainGUI {
         leftPanel.add(scrollPane, gbc);
 
 
-        // Button to save results
+      /*  // Button to save results
         JButton saveButton = new JButton("Save Score");
         saveButton.addActionListener(new SaveButtonListener());
         gbc.gridy++;
-        leftPanel.add(saveButton, gbc);
+        leftPanel.add(saveButton, gbc);*/
 
         // Panel for ExcelReader components
         JPanel rightPanel = new JPanel(new BorderLayout());
@@ -494,12 +494,48 @@ public class MainGUI {
             } catch (InvalidResultException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Invalid Result", JOptionPane.ERROR_MESSAGE);
             }
+
+
+            ExcelPrinter excelPrinter = null;
+            try {
+                //create unique file name
+                LocalDateTime currentDateTime = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+                excelPrinter = new ExcelPrinter("PowerScore"+currentDateTime.format(myFormatObj));    //Excel sheet is created
+
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            System.out.println("Excelark skapad");
+
+
+            if (competitorNrDecathlon[0] !=null) {
+                try {
+
+                    excelPrinter.add(myResultDecathlon, "Decathlon");        //Add all competitor results to excel
+                    excelPrinter.write();
+                    System.out.println("Har skrivit Decathlontabellen");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            if (competitorNrHeptathlon[0] !=null) {
+                try {
+                    //excelPrinter = new ExcelPrinter("PowerScore");
+                    excelPrinter.add(myResultHeptathlon, "Heptathlon");        //Add all competitor results to excel
+                    excelPrinter.write();
+                    System.out.println("Har skrivit Heptathlontabben");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+            }
         }
     }
 
 
     //  Writes the excel sheets
-    private class SaveButtonListener implements ActionListener {
+    /*private class SaveButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             ExcelPrinter excelPrinter = null;
 
@@ -537,7 +573,7 @@ public class MainGUI {
 
             }
         }
-    }
+    }*/
 
     private void loadSheetData(String sheetName) {
         if (excelFile != null) {
