@@ -168,11 +168,13 @@ public class MainGUI {
         leftPanel.add(scrollPane, gbc);
 
 
-      /*  // Button to save results
+        /*
+        // Button to save results
         JButton saveButton = new JButton("Save Score");
         saveButton.addActionListener(new SaveButtonListener());
         gbc.gridy++;
-        leftPanel.add(saveButton, gbc);*/
+        leftPanel.add(saveButton, gbc);
+        */
 
         // Panel for ExcelReader components
         JPanel rightPanel = new JPanel(new BorderLayout());
