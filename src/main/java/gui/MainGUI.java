@@ -28,6 +28,9 @@ import decathlon.*;
 import excel.ExcelTable;
 import heptathlon.*;
 import excel.ExcelPrinter;                           //INGRID
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import static java.lang.Integer.parseInt;
 
@@ -504,10 +507,11 @@ public class MainGUI {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            String sheetName = null;
             if (competitorNrDecathlon[0] != null) {
                 try {
                     excelPrinter.add(myResultDecathlon, "Decathlon");
-
+                    sheetName = "Decathlon";
                     File excelFile = getExcelFile(); // Call the getExcelFile method to get the file
                     excelPrinter.write(excelFile);
                     System.out.println("Har skrivit Decathlontabellen");
@@ -519,7 +523,7 @@ public class MainGUI {
             if (competitorNrHeptathlon[0] != null) {
                 try {
                     excelPrinter.add(myResultHeptathlon, "Heptathlon");
-
+                    sheetName = "Heptathlon";
                     File excelFile = getExcelFile(); // Call the getExcelFile method to get the file
                     excelPrinter.write(excelFile);
                     System.out.println("Har skrivit Heptathlontabben");
@@ -527,6 +531,11 @@ public class MainGUI {
                     throw new RuntimeException(ex);
                 }
             }
+            if (sheetName != null) {
+                loadSheetData(sheetName); // Load data into the GUI
+            }
+
+
         }
         }
 
@@ -584,32 +593,47 @@ public class MainGUI {
     }*/
 
     private void loadSheetData(String sheetName) {
-        if (excelFile != null) {
+        File excelFile = getExcelFile();
+        if (excelFile.exists()) {
             try {
-                ExcelTable reader = new ExcelTable();
-                List<String[]> data = reader.readExcelFile(excelFile, sheetName);
+                XSSFWorkbook workbook = new XSSFWorkbook(excelFile);
+                XSSFSheet sheet = workbook.getSheet(sheetName);
+                if (sheet != null) {
+                    try {
+                        ExcelTable reader = new ExcelTable();
+                        List<String[]> data = reader.readExcelFile(excelFile, sheetName);
 
-                tableModel.setRowCount(0);
-                tableModel.setColumnCount(0);
+                        // Load column names
+                        if (!data.isEmpty()) {
+                            String[] columnNames = data.get(0);
+                            for (String columnName : columnNames) {
+                                boolean columnExists = false;
+                                for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                                    if (tableModel.getColumnName(i).equals(columnName)) {
+                                        columnExists = true;
+                                        break;
+                                    }
+                                }
+                                if (!columnExists) {
+                                    tableModel.addColumn(columnName);
+                                }
+                            }
+                            data.remove(0);
+                        }
 
-                // Load column names
-                if (!data.isEmpty()) {
-                    String[] columnNames = data.get(0);
-                    for (String columnName : columnNames) {
-                        tableModel.addColumn(columnName);
+                        // Load data rows
+                        for (String[] rowData : data) {
+                            tableModel.addRow(rowData);
+                        }
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(frame, "Error reading Excel file: " + ex.getMessage());
                     }
-                    data.remove(0);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Please open an Excel file first.", "File Error", JOptionPane.ERROR_MESSAGE);
                 }
-
-                // Load data rows
-                for (String[] rowData : data) {
-                    tableModel.addRow(rowData);
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(frame, "Error reading Excel file: " + ex.getMessage());
+            } catch (IOException | InvalidFormatException ex) {
+                throw new RuntimeException(ex);
             }
-        } else {
-            JOptionPane.showMessageDialog(frame, "Please open an Excel file first.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
