@@ -500,41 +500,47 @@ public class MainGUI {
 
             ExcelPrinter excelPrinter = null;
             try {
-                //create unique file name
-                LocalDateTime currentDateTime = LocalDateTime.now();
-                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
-                excelPrinter = new ExcelPrinter("PowerScore"+currentDateTime.format(myFormatObj));    //Excel sheet is created
-
+                excelPrinter = new ExcelPrinter("PowerScore");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            System.out.println("Excelark skapad");
-
-
-            if (competitorNrDecathlon[0] !=null) {
+            if (competitorNrDecathlon[0] != null) {
                 try {
+                    excelPrinter.add(myResultDecathlon, "Decathlon");
 
-                    excelPrinter.add(myResultDecathlon, "Decathlon");        //Add all competitor results to excel
-                    excelPrinter.write();
+                    File excelFile = getExcelFile(); // Call the getExcelFile method to get the file
+                    excelPrinter.write(excelFile);
                     System.out.println("Har skrivit Decathlontabellen");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }
-            if (competitorNrHeptathlon[0] !=null) {
+
+            if (competitorNrHeptathlon[0] != null) {
                 try {
-                    //excelPrinter = new ExcelPrinter("PowerScore");
-                    excelPrinter.add(myResultHeptathlon, "Heptathlon");        //Add all competitor results to excel
-                    excelPrinter.write();
+                    excelPrinter.add(myResultHeptathlon, "Heptathlon");
+
+                    File excelFile = getExcelFile(); // Call the getExcelFile method to get the file
+                    excelPrinter.write(excelFile);
                     System.out.println("Har skrivit Heptathlontabben");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-
             }
         }
-    }
+        }
 
+
+    private File getExcelFile() {
+        if (excelFile == null || !excelFile.exists()) {
+            String directoryPath = "C:/Eclipse/resultat_";
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+            String fileName = "PowerScore" + currentDateTime.format(myFormatObj) + ".xlsx";
+            excelFile = new File(directoryPath + fileName);
+        }
+        return excelFile;
+    }
 
     //  Writes the excel sheets
     /*private class SaveButtonListener implements ActionListener {
