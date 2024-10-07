@@ -531,10 +531,11 @@ public class MainGUI {
 
     private File getExcelFile() {
         if (excelFile == null || !excelFile.exists()) {
+            String directoryPath = "C:/Eclipse/resultat_";
             LocalDateTime currentDateTime = LocalDateTime.now();
             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
             String fileName = "PowerScore" + currentDateTime.format(myFormatObj) + ".xlsx";
-            excelFile = new File(fileName);
+            excelFile = new File(directoryPath + fileName);
         }
         return excelFile;
     }
