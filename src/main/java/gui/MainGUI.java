@@ -136,7 +136,6 @@ public class MainGUI {
             public void actionPerformed(ActionEvent e) {
                 String selectedCompetition = (String) competitionTypeBox.getSelectedItem();
 
-
                 disciplineBox.removeAllItems();
 
                 if (selectedCompetition.equals("Decathlon")) {
@@ -151,8 +150,10 @@ public class MainGUI {
             }
         });
 
+
         // Input for result
         resultField = new JTextField(10);
+        resultField.setToolTipText(getTooltipText());
         gbc.gridy++;
         leftPanel.add(new JLabel("Enter Result:"), gbc);
         gbc.gridy++;
@@ -169,6 +170,24 @@ public class MainGUI {
         JScrollPane scrollPane = new JScrollPane(outputArea);
         gbc.gridy++;
         leftPanel.add(scrollPane, gbc);
+
+        if (resultField != null) {
+            competitionTypeBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    resultField.setToolTipText(getTooltipText());
+                }
+            });
+
+            disciplineBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (disciplineBox.getSelectedItem() != null) {
+                        resultField.setToolTipText(getTooltipText());
+                    }
+                }
+            });
+        }
 
 
         /*
@@ -376,6 +395,20 @@ public class MainGUI {
                     }
                 }
 
+                competitionTypeBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        resultField.setToolTipText(getTooltipText());
+                    }
+                });
+
+                disciplineBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        resultField.setToolTipText(getTooltipText());
+                    }
+                });
+
 
                 outputArea.append("Competitor: " + name + "\n");
                 outputArea.append("Competition: " + competition + "\n");
@@ -536,6 +569,8 @@ public class MainGUI {
             }
 
 
+
+
         }
         }
 
@@ -645,7 +680,62 @@ public class MainGUI {
             }
         }
     }
-    
+
+    private String getTooltipText() {
+        String competition = (String) competitionTypeBox.getSelectedItem();
+        String discipline = (String) disciplineBox.getSelectedItem();
+        switch (competition) {
+            case "Decathlon": {
+                switch (discipline) {
+                    case "100m (Measured in seconds)":
+                        return "Enter a value between 5 and 20";
+                    case "400m (Measured in seconds)":
+                        return "Enter a value between 20 and 100";
+                    case "1500m (Measured in seconds)":
+                        return "Enter a value between 150 and 400";
+                    case "110m Hurdles (Measured in seconds)":
+                        return "Enter a value between 10 and 30";
+                    case "Long Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 1000";
+                    case "High Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 300";
+                    case "Pole Vault (Measured in centimeters)":
+                        return "Enter a value between 0 and 1000";
+                    case "Discus Throw (Measured in meters)":
+                        return "Enter a value between 0 and 85";
+                    case "Javelin Throw (Measured in meters)":
+                        return "Enter a value between 0 and 110";
+                    case "Shot Put (Measured in meters)":
+                        return "Enter a value between 0 and 30";
+                    default:
+                        return "Enter result for the selected discipline";
+                }
+            }
+            case "Heptathlon": {
+                switch (discipline) {
+                    case "100m Hurdles (Measured in seconds)":
+                        return "Enter a value between 10 and 30";
+                    case "200m (Measured in seconds)":
+                        return "Enter a value between 20 and 100";
+                    case "800m (Measured in seconds)":
+                        return "Enter a value between 70 and 250";
+                    case "Long Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 1000";
+                    case "High Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 300";
+                    case "Javelin Throw (Measured in meters)":
+                        return "Enter a value between 0 and 110";
+                    case "Shot Put (Measured in meters)":
+                        return "Enter a value between 0 and 30";
+                    default:
+                        return "Enter result for the selected discipline";
+                }
+            }
+            default:
+                return "Select a competition type and discipline";
+
+        }
+    }
 }
 
 
