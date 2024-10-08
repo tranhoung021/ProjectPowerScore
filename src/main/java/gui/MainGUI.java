@@ -136,7 +136,6 @@ public class MainGUI {
             public void actionPerformed(ActionEvent e) {
                 String selectedCompetition = (String) competitionTypeBox.getSelectedItem();
 
-
                 disciplineBox.removeAllItems();
 
                 if (selectedCompetition.equals("Decathlon")) {
@@ -151,8 +150,10 @@ public class MainGUI {
             }
         });
 
+
         // Input for result
         resultField = new JTextField(10);
+        resultField.setToolTipText(getTooltipText());
         gbc.gridy++;
         leftPanel.add(new JLabel("Enter Result:"), gbc);
         gbc.gridy++;
@@ -169,6 +170,24 @@ public class MainGUI {
         JScrollPane scrollPane = new JScrollPane(outputArea);
         gbc.gridy++;
         leftPanel.add(scrollPane, gbc);
+
+        if (resultField != null) {
+            competitionTypeBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    resultField.setToolTipText(getTooltipText());
+                }
+            });
+
+            disciplineBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (disciplineBox.getSelectedItem() != null) {
+                        resultField.setToolTipText(getTooltipText());
+                    }
+                }
+            });
+        }
 
 
       /*  // Button to save results
@@ -374,6 +393,20 @@ public class MainGUI {
                     }
                 }
 
+                competitionTypeBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        resultField.setToolTipText(getTooltipText());
+                    }
+                });
+
+                disciplineBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        resultField.setToolTipText(getTooltipText());
+                    }
+                });
+
 
                 outputArea.append("Competitor: " + name + "\n");
                 outputArea.append("Competition: " + competition + "\n");
@@ -534,6 +567,8 @@ public class MainGUI {
             }
 
 
+
+
         }
         }
 
@@ -591,47 +626,32 @@ public class MainGUI {
     }*/
 
     private void loadSheetData(String sheetName) {
-        File excelFile = getExcelFile();
-        if (excelFile.exists()) {
+        if (excelFile != null) {
             try {
-                XSSFWorkbook workbook = new XSSFWorkbook(excelFile);
-                XSSFSheet sheet = workbook.getSheet(sheetName);
-                if (sheet != null) {
-                    try {
-                        ExcelTable reader = new ExcelTable();
-                        List<String[]> data = reader.readExcelFile(excelFile, sheetName);
+                ExcelTable reader = new ExcelTable();
+                List<String[]> data = reader.readExcelFile(excelFile, sheetName);
 
-                        // Load column names
-                        if (!data.isEmpty()) {
-                            String[] columnNames = data.get(0);
-                            for (String columnName : columnNames) {
-                                boolean columnExists = false;
-                                for (int i = 0; i < tableModel.getColumnCount(); i++) {
-                                    if (tableModel.getColumnName(i).equals(columnName)) {
-                                        columnExists = true;
-                                        break;
-                                    }
-                                }
-                                if (!columnExists) {
-                                    tableModel.addColumn(columnName);
-                                }
-                            }
-                            data.remove(0);
-                        }
+                tableModel.setRowCount(0);
+                tableModel.setColumnCount(0);
 
-                        // Load data rows
-                        for (String[] rowData : data) {
-                            tableModel.addRow(rowData);
-                        }
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(frame, "Error reading Excel file: " + ex.getMessage());
+                // Load column names
+                if (!data.isEmpty()) {
+                    String[] columnNames = data.get(0);
+                    for (String columnName : columnNames) {
+                        tableModel.addColumn(columnName);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Please open an Excel file first.", "File Error", JOptionPane.ERROR_MESSAGE);
+                    data.remove(0);
                 }
-            } catch (IOException | InvalidFormatException ex) {
-                throw new RuntimeException(ex);
+
+                // Load data rows
+                for (String[] rowData : data) {
+                    tableModel.addRow(rowData);
+                }
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Error reading Excel file: " + ex.getMessage());
             }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please open an Excel file first.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -658,7 +678,62 @@ public class MainGUI {
             }
         }
     }
-    
+
+    private String getTooltipText() {
+        String competition = (String) competitionTypeBox.getSelectedItem();
+        String discipline = (String) disciplineBox.getSelectedItem();
+        switch (competition) {
+            case "Decathlon": {
+                switch (discipline) {
+                    case "100m (Measured in seconds)":
+                        return "Enter a value between 5 and 20";
+                    case "400m (Measured in seconds)":
+                        return "Enter a value between 20 and 100";
+                    case "1500m (Measured in seconds)":
+                        return "Enter a value between 150 and 400";
+                    case "110m Hurdles (Measured in seconds)":
+                        return "Enter a value between 10 and 30";
+                    case "Long Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 1000";
+                    case "High Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 300";
+                    case "Pole Vault (Measured in centimeters)":
+                        return "Enter a value between 0 and 1000";
+                    case "Discus Throw (Measured in meters)":
+                        return "Enter a value between 0 and 85";
+                    case "Javelin Throw (Measured in meters)":
+                        return "Enter a value between 0 and 110";
+                    case "Shot Put (Measured in meters)":
+                        return "Enter a value between 0 and 30";
+                    default:
+                        return "Enter result for the selected discipline";
+                }
+            }
+            case "Heptathlon": {
+                switch (discipline) {
+                    case "100m Hurdles (Measured in seconds)":
+                        return "Enter a value between 10 and 30";
+                    case "200m (Measured in seconds)":
+                        return "Enter a value between 20 and 100";
+                    case "800m (Measured in seconds)":
+                        return "Enter a value between 70 and 250";
+                    case "Long Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 1000";
+                    case "High Jump (Measured in centimeters)":
+                        return "Enter a value between 0 and 300";
+                    case "Javelin Throw (Measured in meters)":
+                        return "Enter a value between 0 and 110";
+                    case "Shot Put (Measured in meters)":
+                        return "Enter a value between 0 and 30";
+                    default:
+                        return "Enter result for the selected discipline";
+                }
+            }
+            default:
+                return "Select a competition type and discipline";
+
+        }
+    }
 }
 
 
